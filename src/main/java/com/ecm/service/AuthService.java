@@ -1,5 +1,9 @@
 package com.ecm.service;
 
-public class AuthService {
+import com.ecm.response.SignupRequest;
+
+public interface AuthService {
+	
+	String createUser(SignupRequest req);
 
 }
