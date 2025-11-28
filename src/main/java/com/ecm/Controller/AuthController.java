@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecm.domain.USER_ROLE;
 import com.ecm.model.User;
+import com.ecm.model.VerificationCode;
 import com.ecm.repository.UserRepository;
+import com.ecm.response.ApiResponse;
 import com.ecm.response.AuthResponse;
 import com.ecm.response.SignupRequest;
 import com.ecm.service.AuthService;
@@ -25,7 +27,7 @@ public class AuthController {
 	
 	
 	@PostMapping("/signup")
-	public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignupRequest req){
+	public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignupRequest req) throws Exception{
 		
 		String jwt=authService.createUser(req);
 		
@@ -36,5 +38,19 @@ public class AuthController {
 		
 		return ResponseEntity.ok(res);
 	}
+	
+	
+	@PostMapping("/sent/login-signup-otp")
+	public ResponseEntity<ApiResponse> sentOtprHandler(@RequestBody VerificationCode req) throws Exception{
+		
+		authService.sentLoginOtp(req.getEmail());
+		
+		ApiResponse res=new ApiResponse();
+		
+		res.setMessage("otp sent successfully");
+	
+		return ResponseEntity.ok(res);
+	}
+
 
 }
