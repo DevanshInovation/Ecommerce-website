@@ -10,6 +10,7 @@ import com.ecm.domain.USER_ROLE;
 import com.ecm.model.User;
 import com.ecm.model.VerificationCode;
 import com.ecm.repository.UserRepository;
+import com.ecm.request.LoginRequest;
 import com.ecm.response.ApiResponse;
 import com.ecm.response.AuthResponse;
 import com.ecm.response.SignupRequest;
@@ -50,6 +51,14 @@ public class AuthController {
 		res.setMessage("otp sent successfully");
 	
 		return ResponseEntity.ok(res);
+	}
+	
+	@PostMapping("/signin")
+	public ResponseEntity<AuthResponse> loginHandler(@RequestBody LoginRequest req) throws Exception{
+		
+		AuthResponse authResponse=authService.signing(req);
+		
+		return ResponseEntity.ok(authResponse);
 	}
 
 

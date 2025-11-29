@@ -3,6 +3,7 @@ package com.ecm.service.Impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomUserServiceImpl implements UserDetailsService {
 	
+	@Autowired
 	private UserRepository userRepo;
 	private SellerRepository sellerRepo;
 	private static final String SELLER_PREFIX="seller";
@@ -51,7 +53,7 @@ public class CustomUserServiceImpl implements UserDetailsService {
 			if(role==null) role=USER_ROLE.ROLE_CUSTOMER;
 			
 			List<GrantedAuthority> authorityList=new ArrayList<GrantedAuthority>();
-			authorityList.add(new SimpleGrantedAuthority("Role"+role));
+			authorityList.add(new SimpleGrantedAuthority(role.toString()));
 			return new org.springframework.security.core.userdetails.User(email, password, authorityList);
 		}
 
