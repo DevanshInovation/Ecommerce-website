@@ -23,7 +23,7 @@ public class CartItem {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String id;
+	private Long id;
 	
 	@ManyToOne
 	@JsonIgnore

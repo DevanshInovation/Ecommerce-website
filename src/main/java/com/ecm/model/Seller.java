@@ -28,7 +28,7 @@ public class Seller {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String id;
+	private Long id;
 	
 	private String sellerName;
 	
