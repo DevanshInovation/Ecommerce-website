@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ecm.config.JwtProvider;
 import com.ecm.domain.AccountStatus;
 import com.ecm.domain.USER_ROLE;
+import com.ecm.exception.SellerException;
 import com.ecm.model.Address;
 import com.ecm.model.Seller;
 import com.ecm.repository.AddressRepository;
@@ -18,159 +19,159 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SelllerServiceImpl implements SellerService{
+public class SelllerServiceImpl implements SellerService {
 
-	private final SellerRepository sellerRepository;
-	private final JwtProvider jwtProvider;
-	private final PasswordEncoder passwordEncoder;
-	private final AddressRepository addressRepository;
+    private final SellerRepository sellerRepository;
+    private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final AddressRepository addressRepository;
 
-	@Override
-	public Seller getSellerProfile(String jwt) throws Exception {
-		String email=jwtProvider.getEmailFromJwtToken(jwt);
-		return this.getSellerByEmail(email);
-	}
+    @Override
+    public Seller getSellerProfile(String jwt) throws SellerException {
+        String email = jwtProvider.getEmailFromJwtToken(jwt);
+        return this.getSellerByEmail(email);
+    }
 
-	@Override
-	public Seller createSeller(Seller seller) throws Exception {
-		Seller sellerExist=sellerRepository.findByEmail(seller.getEmail());
-		if(sellerExist!=null) {
-			throw new Exception("Seller already exist with provided email id");
-		}
-		Address saveAddress=addressRepository.save(seller.getPickUpAddress());
-		
-		Seller newSeller=new Seller();
-		newSeller.setEmail(seller.getEmail());
-		newSeller.setPassword(passwordEncoder.encode(seller.getPassword()));
-		newSeller.setSellerName(seller.getSellerName());
-		newSeller.setPickUpAddress(saveAddress);
-		newSeller.setGSTIN(seller.getGSTIN());
-		newSeller.setRole(USER_ROLE.ROLE_SELLER);
-		newSeller.setMobile(seller.getMobile());
-		newSeller.setBankDetails(seller.getBankDetails());
-		newSeller.setBusinessDetails(seller.getBusinessDetails());
-		
-		return sellerRepository.save(newSeller);
-	}
+    @Override
+    public Seller createSeller(Seller seller) throws SellerException {
+        Seller sellerExist = sellerRepository.findByEmail(seller.getEmail());
+        if (sellerExist != null) {
+            throw new SellerException("Seller already exist with provided email id");
+        }
 
-	@Override
-	public Seller getSellerById(Long id) throws Exception {
-		return sellerRepository.findById(id)
-				.orElseThrow(()-> new Exception("seller not found with id -" +id));
-	}
+        Address saveAddress = addressRepository.save(seller.getPickUpAddress());
 
-	@Override
-	public Seller getSellerByEmail(String email) throws Exception {
-		Seller seller=sellerRepository.findByEmail(email);
-		if(seller==null) {
-			throw new Exception("Seller not found");
-		}
-		return seller;
-	}
+        Seller newSeller = new Seller();
+        newSeller.setEmail(seller.getEmail());
+        newSeller.setPassword(passwordEncoder.encode(seller.getPassword()));
+        newSeller.setSellerName(seller.getSellerName());
+        newSeller.setPickUpAddress(saveAddress);
+        newSeller.setGSTIN(seller.getGSTIN());
+        newSeller.setRole(USER_ROLE.ROLE_SELLER);
+        newSeller.setMobile(seller.getMobile());
+        newSeller.setBankDetails(seller.getBankDetails());
+        newSeller.setBusinessDetails(seller.getBusinessDetails());
 
-	@Override
-	public List<Seller> getAllSellers(AccountStatus Status) {
-		
-		return sellerRepository.findByAccountStatus(Status);
-	}
+        return sellerRepository.save(newSeller);
+    }
 
-	@Override
-	public Seller updateSeller(Long id, Seller seller) throws Exception {
-		Seller existingSeller=this.getSellerById(id);
-		
-		 // Basic seller fields
-	    if (seller.getSellerName() != null) {
-	        existingSeller.setSellerName(seller.getSellerName());
-	    }
+    @Override
+    public Seller getSellerById(Long id) throws SellerException {
+        return sellerRepository.findById(id)
+                .orElseThrow(() -> new SellerException("Seller not found with id - " + id));
+    }
 
-	    if (seller.getMobile() != null) {
-	        existingSeller.setMobile(seller.getMobile());
-	    }
+    @Override
+    public Seller getSellerByEmail(String email) throws SellerException {
+        Seller seller = sellerRepository.findByEmail(email);
+        if (seller == null) {
+            throw new SellerException("Seller not found with email - " + email);
+        }
+        return seller;
+    }
 
-	    if (seller.getEmail() != null) {
-	        existingSeller.setEmail(seller.getEmail());
-	    }
+    @Override
+    public List<Seller> getAllSellers(AccountStatus status) {
+        return sellerRepository.findByAccountStatus(status);
+    }
 
-	    // BusinessDetails
-	    if (seller.getBusinessDetails() != null
-	            && seller.getBusinessDetails().getBusinessName() != null) {
+    @Override
+    public Seller updateSeller(Long id, Seller seller) throws SellerException {
+        Seller existingSeller = this.getSellerById(id);
 
-	        existingSeller.getBusinessDetails().setBusinessName(
-	                seller.getBusinessDetails().getBusinessName()
-	        );
-	    }
+        // Basic seller fields
+        if (seller.getSellerName() != null) {
+            existingSeller.setSellerName(seller.getSellerName());
+        }
 
-	    // BankDetails
-	    if (seller.getBankDetails() != null
-	            && seller.getBankDetails().getAccountHolderName() != null
-	            && seller.getBankDetails().getIfscCode() != null
-	            && seller.getBankDetails().getAccountNumber() != null) {
+        if (seller.getMobile() != null) {
+            existingSeller.setMobile(seller.getMobile());
+        }
 
-	        existingSeller.getBankDetails().setAccountHolderName(
-	                seller.getBankDetails().getAccountHolderName()
-	        );
-	        existingSeller.getBankDetails().setAccountNumber(
-	                seller.getBankDetails().getAccountNumber()
-	        );
-	        existingSeller.getBankDetails().setIfscCode(
-	                seller.getBankDetails().getIfscCode()
-	        );
-	    }
+        if (seller.getEmail() != null) {
+            existingSeller.setEmail(seller.getEmail());
+        }
 
-	    // PickupAddress
-	    if (seller.getPickUpAddress() != null
-	            && seller.getPickUpAddress().getAddress() != null
-	            && seller.getPickUpAddress().getMobile() != null
-	            && seller.getPickUpAddress().getCity() != null
-	            && seller.getPickUpAddress().getState() != null) {
+        // BusinessDetails
+        if (seller.getBusinessDetails() != null
+                && seller.getBusinessDetails().getBusinessName() != null) {
 
-	        existingSeller.getPickUpAddress().setAddress(
-	                seller.getPickUpAddress().getAddress()
-	        );
-	        existingSeller.getPickUpAddress().setCity(
-	                seller.getPickUpAddress().getCity()
-	        );
-	        existingSeller.getPickUpAddress().setState(
-	                seller.getPickUpAddress().getState()
-	        );
-	        existingSeller.getPickUpAddress().setMobile(
-	                seller.getPickUpAddress().getMobile()
-	        );
-	        existingSeller.getPickUpAddress().setPinCode(
-	                seller.getPickUpAddress().getPinCode()
-	        );
-	    }
+            existingSeller.getBusinessDetails().setBusinessName(
+                    seller.getBusinessDetails().getBusinessName()
+            );
+        }
 
-	    // GSTIN (optional)
-	    if (seller.getGSTIN() != null) {
-	        existingSeller.setGSTIN(seller.getGSTIN());
-	    }
+        // BankDetails
+        if (seller.getBankDetails() != null
+                && seller.getBankDetails().getAccountHolderName() != null
+                && seller.getBankDetails().getIfscCode() != null
+                && seller.getBankDetails().getAccountNumber() != null) {
 
-	    return sellerRepository.save(existingSeller);
-		
-	}
+            existingSeller.getBankDetails().setAccountHolderName(
+                    seller.getBankDetails().getAccountHolderName()
+            );
+            existingSeller.getBankDetails().setAccountNumber(
+                    seller.getBankDetails().getAccountNumber()
+            );
+            existingSeller.getBankDetails().setIfscCode(
+                    seller.getBankDetails().getIfscCode()
+            );
+        }
 
-	@Override
-	public void deleteSeller(Long id) throws Exception {
-		Seller seller=getSellerById(id);
-		sellerRepository.delete(seller);
-		
-	}
+        // PickupAddress
+        if (seller.getPickUpAddress() != null
+                && seller.getPickUpAddress().getAddress() != null
+                && seller.getPickUpAddress().getMobile() != null
+                && seller.getPickUpAddress().getCity() != null
+                && seller.getPickUpAddress().getState() != null) {
 
-	@Override
-	public Seller verifyEmail(String email, String otp) throws Exception {
-		Seller seller = getSellerByEmail(email);
+            existingSeller.getPickUpAddress().setAddress(
+                    seller.getPickUpAddress().getAddress()
+            );
+            existingSeller.getPickUpAddress().setCity(
+                    seller.getPickUpAddress().getCity()
+            );
+            existingSeller.getPickUpAddress().setState(
+                    seller.getPickUpAddress().getState()
+            );
+            existingSeller.getPickUpAddress().setMobile(
+                    seller.getPickUpAddress().getMobile()
+            );
+            existingSeller.getPickUpAddress().setPinCode(
+                    seller.getPickUpAddress().getPinCode()
+            );
+        }
 
-	    // yahan agar OTP verification logic hai to wo bhi check kar sakte ho
-	    // if (!seller.getOtp().equals(otp)) throw new Exception("Invalid otp");
+        // GSTIN (optional)
+        if (seller.getGSTIN() != null) {
+            existingSeller.setGSTIN(seller.getGSTIN());
+        }
 
-	    seller.setEmailVerified(true);
-	    return sellerRepository.save(seller);
-	}
+        return sellerRepository.save(existingSeller);
+    }
 
-	public Seller updateSellerAccountStatus(Long sellerId, AccountStatus status) throws Exception {
-		 Seller seller = getSellerById(sellerId);
-		    seller.setAccountStatus(status);
-		    return sellerRepository.save(seller);
-	}
+    @Override
+    public void deleteSeller(Long id) throws SellerException {
+        Seller seller = getSellerById(id);
+        sellerRepository.delete(seller);
+    }
+
+    @Override
+    public Seller verifyEmail(String email, String otp) throws SellerException {
+        Seller seller = getSellerByEmail(email);
+
+        // TODO: OTP verification logic yahan add karo (verification_code table se)
+        // Agar OTP match nahi hota to:
+        // throw new SellerException("Invalid OTP");
+
+        seller.setEmailVerified(true);
+        return sellerRepository.save(seller);
+    }
+
+//    @Override
+//    public Seller updateSellerAccountStatus(Long sellerId, AccountStatus status) throws SellerException {
+//        Seller seller = getSellerById(sellerId);
+//        seller.setAccountStatus(status);
+//        return sellerRepository.save(seller);
+//    }
 }

@@ -25,7 +25,7 @@ public class CustomUserServiceImpl implements UserDetailsService {
 	
 	@Autowired
 	private UserRepository userRepo;
-	private SellerRepository sellerRepo;
+	private final SellerRepository sellerRepo;
 	private static final String SELLER_PREFIX="seller";
 
 	/**
@@ -36,6 +36,7 @@ public class CustomUserServiceImpl implements UserDetailsService {
 //		if(username.startsWith(SELLER_PREFIX)) {
 //		 String actualUserName=username.substring(SELLER_PREFIX.length());
 		 Seller seller=sellerRepo.findByEmail(username); 
+		 System.out.println(username);
 //		 
 		 if(seller!=null) {
 			 return buildUserDetails(seller.getEmail(), seller.getPassword(), seller.getRole());
