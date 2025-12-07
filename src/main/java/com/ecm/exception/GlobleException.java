@@ -19,4 +19,13 @@ public class GlobleException {
 		errorDetails.setTimestamp(LocalDateTime.now());
 		return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(ProductException.class)
+	public ResponseEntity<ErrorDetails> productExceptionHandler(SellerException se, WebRequest req){
+		ErrorDetails errorDetails=new ErrorDetails();
+		errorDetails.setError(se.getMessage());
+		errorDetails.setDetails(req.getDescription(false));
+		errorDetails.setTimestamp(LocalDateTime.now());
+		return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
+	}
 }
