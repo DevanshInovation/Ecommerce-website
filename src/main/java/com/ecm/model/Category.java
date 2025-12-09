@@ -1,7 +1,4 @@
 package com.ecm.model;
-
-
-
 import org.hibernate.annotations.ManyToAny;
 
 import jakarta.persistence.Column;
@@ -27,13 +24,13 @@ public class Category {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String id;
+	private Long id;
 	
 	private String name;
 	
 	@NotNull
 	@Column( unique = true )
-	private String columnId;
+	private String categoryId;
 	
 	@ManyToOne
 	private Category parentCategory;
