@@ -1,12 +1,12 @@
 package com.ecm.service.Impl;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -166,7 +166,7 @@ public class ProductServiceImpl implements ProductService{
 			 if (sort != null && !sort.isEmpty()) {
 			        switch (sort) {
 			            case "price_low":
-			                pageable = (Pageable) PageRequest.of(
+			                pageable = PageRequest.of(
 			                        pageNumber != null ? pageNumber : 0,
 			                        10,
 			                        Sort.by("sellingPrice").ascending()
@@ -174,7 +174,7 @@ public class ProductServiceImpl implements ProductService{
 			                break;
 
 			            case "price_high":
-			                pageable = (Pageable) PageRequest.of(
+			                pageable = PageRequest.of(
 			                        pageNumber != null ? pageNumber : 0,
 			                        10,
 			                        Sort.by("sellingPrice").descending()
@@ -182,7 +182,7 @@ public class ProductServiceImpl implements ProductService{
 			                break;
 
 			            case "newest":
-			                pageable = (Pageable) PageRequest.of(
+			                pageable = PageRequest.of(
 			                        pageNumber != null ? pageNumber : 0,
 			                        10,
 			                        Sort.by("createdAt").descending()
@@ -190,14 +190,14 @@ public class ProductServiceImpl implements ProductService{
 			                break;
 
 			            default:
-			                pageable = (Pageable) PageRequest.of(
+			                pageable = PageRequest.of(
 			                        pageNumber != null ? pageNumber : 0,
 			                        10,
 			                        Sort.by("id").ascending()
 			                );
 		};
 			 }else {
-				 pageable=(Pageable) PageRequest.of(pageNumber!=null ? pageNumber : 0, 10, Sort.unsorted());
+				 pageable = PageRequest.of(pageNumber!=null ? pageNumber : 0, 10, Sort.unsorted());
 				 
 			 }
 			        
