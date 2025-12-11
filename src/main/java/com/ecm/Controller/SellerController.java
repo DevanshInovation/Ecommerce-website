@@ -15,14 +15,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecm.config.JwtProvider;
 import com.ecm.domain.AccountStatus;
+import com.ecm.exception.SellerException;
 import com.ecm.model.Seller;
+import com.ecm.model.SellerReport;
 import com.ecm.model.VerificationCode;
 import com.ecm.repository.VerificationCodeRepository;
 import com.ecm.request.LoginRequest;
 import com.ecm.response.ApiResponse;
 import com.ecm.response.AuthResponse;
 import com.ecm.service.AuthService;
+import com.ecm.service.SellerReportService;
 import com.ecm.service.SellerService;
 import com.ecm.service.Impl.EmailService;
 import com.ecm.utils.OtpUtil;
@@ -39,7 +43,7 @@ public class SellerController {
 	private final AuthService authService;
 	private final EmailService emailService;
 	private final VerificationCodeRepository verificationCodeRepository;
-	
+	private final SellerReportService sellerReportService;
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> loginSeller(@RequestBody LoginRequest req) throws Exception{
 
@@ -102,6 +106,17 @@ public class SellerController {
        Seller seller = sellerService.getSellerProfile(jwt); 
        return new ResponseEntity<>(seller, HttpStatus.OK);
 	 }
+	
+	@GetMapping("/report")
+	public ResponseEntity<SellerReport> getSellerReport(
+	        @RequestHeader("Authorization") String jwt) throws SellerException {
+
+//	    String email = JwtProvider.getEmailFromJwtToken(jwt);
+	    Seller seller = sellerService.getSellerProfile(jwt);
+	    SellerReport report = sellerReportService.getSellerReport(seller);
+	    return new ResponseEntity<>(report, HttpStatus.OK);
+	}
+
 	
 	@GetMapping
 	public ResponseEntity<List<Seller>> getAllSellers(

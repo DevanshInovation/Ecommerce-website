@@ -19,10 +19,14 @@ import com.ecm.model.Address;
 import com.ecm.model.Cart;
 import com.ecm.model.Order;
 import com.ecm.model.OrderItem;
+import com.ecm.model.Seller;
+import com.ecm.model.SellerReport;
 import com.ecm.model.User;
 import com.ecm.response.PaymentLinkResponse;
 import com.ecm.service.CartService;
 import com.ecm.service.OrderService;
+import com.ecm.service.SellerReportService;
+import com.ecm.service.SellerService;
 import com.ecm.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +39,8 @@ public class OrderController {
 	private final OrderService orderService;
 	private final UserService userService;
 	private final CartService cartService;
+	private final SellerService sellerService;
+	private final SellerReportService sellerReportService;
 	
 	@PostMapping("/orders")
 	public ResponseEntity<PaymentLinkResponse> createOrderHandler(
@@ -130,16 +136,16 @@ public class OrderController {
 	    // 1. Order cancel (status change, user check etc.)
 	    Order order = orderService.cancelOrder(orderId, user);
 
-//	    // 2. Seller report update
-//	    Seller seller = sellerService.getSellerById(order.getSellerId());
-//	    SellerReport report = sellerReportService.getSellerReport(seller);
-//
-//	    report.setCanceledOrders(report.getCanceledOrders() + 1);
-//	    report.setTotalRefunds(
-//	            report.getTotalRefunds() + order.getTotalSellingPrice()
-//	    );
+	    // 2. Seller report update
+	    Seller seller = sellerService.getSellerById(order.getSellerId());
+	    SellerReport report = sellerReportService.getSellerReport(seller);
 
-//	    sellerReportService.updateSellerReport(report);
+	    report.setCanceledOrders(report.getCanceledOrders() + 1);
+	    report.setTotalRefunds(
+	            report.getTotalRefunds() + order.getTotalSellingPrice()
+	    );
+
+	    sellerReportService.updateSellerReport(report);
 
 	    return ResponseEntity.ok(order);
 	}
