@@ -38,7 +38,7 @@ public class Order {
 	private String orderId;
 	
 	@ManyToOne
-	private User user;
+	private User userId;
 	
 	private Long sellerId;
 
