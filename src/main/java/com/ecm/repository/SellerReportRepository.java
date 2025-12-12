@@ -6,9 +6,9 @@ import com.ecm.model.Seller;
 import com.ecm.model.SellerReport;
 
 public interface SellerReportRepository extends JpaRepository<SellerReport, Long>{
-	
-//	SellerReport findBySellerById(Long long1);
-	SellerReport UpdateSellerReport(SellerReport sellerReport);
-	SellerReport findBySellerById(Long id);
+
+	// Use save(...) from JpaRepository to create/update reports.
+	// Derived query to find a SellerReport by the seller's id.
+	SellerReport findBySeller_Id(Long id);
 
 }

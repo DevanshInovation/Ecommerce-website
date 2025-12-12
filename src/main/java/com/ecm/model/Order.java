@@ -65,5 +65,14 @@ public class Order {
 	
 	private LocalDateTime orderDate=LocalDateTime.now();
 	private LocalDateTime deliveryDate = orderDate.plusDays(7);
+
+	// Back-compat convenience methods: some service code expects getUserId()/setUserId(User).
+	public User getUserId() {
+		return this.userId;
+	}
+
+	public void setUserId(User user) {
+		this.userId = user;
+	}
 	
 }

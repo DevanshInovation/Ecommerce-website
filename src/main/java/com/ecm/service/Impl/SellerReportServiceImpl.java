@@ -24,7 +24,7 @@ public class SellerReportServiceImpl implements SellerReportService{
 	@Override
 	public SellerReport getSellerReport(Seller seller) {
 
-	    SellerReport sr = sellerReportRepository.findBySellerById(seller.getId());
+		SellerReport sr = sellerReportRepository.findBySeller_Id(seller.getId());
 
 	    if (sr == null) {
 	        SellerReport newReport = new SellerReport();

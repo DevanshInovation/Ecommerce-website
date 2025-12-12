@@ -8,7 +8,8 @@ import com.ecm.model.Order;
 
 public interface OrderRepository extends JpaRepository<Order, Long>{
 	
-	List<Order> findByUserId(Long userId);
+	// Find orders by the user's id (userId is a User entity in Order)
+	List<Order> findByUserId_Id(Long userId);
 	List<Order> findBySellerId(Long sellerId);
 
 }

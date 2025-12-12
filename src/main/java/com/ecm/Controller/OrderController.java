@@ -19,15 +19,19 @@ import com.ecm.model.Address;
 import com.ecm.model.Cart;
 import com.ecm.model.Order;
 import com.ecm.model.OrderItem;
+import com.ecm.model.PaymentOrder;
 import com.ecm.model.Seller;
 import com.ecm.model.SellerReport;
 import com.ecm.model.User;
+import com.ecm.repository.PaymentOrderRepository;
 import com.ecm.response.PaymentLinkResponse;
 import com.ecm.service.CartService;
 import com.ecm.service.OrderService;
+import com.ecm.service.PaymentService;
 import com.ecm.service.SellerReportService;
 import com.ecm.service.SellerService;
 import com.ecm.service.UserService;
+import com.razorpay.PaymentLink;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,6 +45,8 @@ public class OrderController {
 	private final CartService cartService;
 	private final SellerService sellerService;
 	private final SellerReportService sellerReportService;
+	private final  PaymentService paymentService;
+	private final PaymentOrderRepository paymentOrderRepository;
 	
 	@PostMapping("/orders")
 	public ResponseEntity<PaymentLinkResponse> createOrderHandler(
@@ -57,29 +63,32 @@ public class OrderController {
 	    Set<Order> orders = orderService.createOrder(user, shippingAddress, cart);
 
 //	    // 3. Create PaymentOrder (your own table)
-//	    PaymentOrder paymentOrder = paymentService.createOrder(user, orders);
+	    PaymentOrder paymentOrder = paymentService.createOrder(user, orders);
 //
 	    PaymentLinkResponse res = new PaymentLinkResponse();
 
 	    // 4. Razorpay payment link (if online payment)
-//	    if (paymentMethod.equals(PaymentMethod.RAZORPAY)) {
-//
-//	        Map<String, Object> payment =
-//	                paymentService.createRazorpayPaymentLink(
-//	                        user,
-//	                        paymentOrder.getAmount(),
-//	                        paymentOrder.getId()
-//	                );
-//
-//	        String paymentUrl = (String) payment.get("short_url");
-//	        String paymentUrlId = (String) payment.get("id");
-//
-//	        res.setPayment_url(paymentUrl);
-//	        res.setPayment_link_id(paymentUrlId);
-//	    }
-//
-//	    res.setPaymentOrderId(paymentOrder.getId());
-//	    res.setMessage("Order created successfully");
+	    if (paymentMethod.equals(PaymentMethod.RAZORPAY)) {
+
+	        PaymentLink payment = paymentService.createRozerPayPaymentLink(
+	                        user,
+	                        paymentOrder.getAmount(), 
+	                        paymentOrder.getId()
+	                );
+
+	        String paymentUrl = (String) payment.get("short_url");
+	        String paymentUrlId = (String) payment.get("id");
+
+	        res.setPayment_link_url(paymentUrl);
+	        
+	        paymentOrder.setPaymentLinkId(paymentUrlId);
+	        paymentOrderRepository.save(paymentOrder);
+	    
+	    }else {
+	    	
+	    	throw new Exception("Try Again...");
+	    	
+	    }
 
 	    return new ResponseEntity<>(res, HttpStatus.OK);
 	}

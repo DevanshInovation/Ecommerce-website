@@ -119,7 +119,7 @@ public class OrderServiceImpl implements OrderService{
 
 	@Override
 	public List<Order> userOrderHistory(Long userId) {
-		return orderRepository.findByUserId(userId);
+		return orderRepository.findByUserId_Id(userId);
 	}
 
 	@Override
@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService{
 	}
 
 	@Override
-	public Order updateOrderStatus(Long orderId, OrderStatus orderStatus) throws Exception {
+	public Order updateOrderStatus(Long orderId, OrderStatus orderStatus ) throws Exception {
 		Order order=findOrderById(orderId);
 		order.setOrderStatus(orderStatus);
 		return orderRepository.save(order);
