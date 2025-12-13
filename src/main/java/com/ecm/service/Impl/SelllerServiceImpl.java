@@ -168,10 +168,10 @@ public class SelllerServiceImpl implements SellerService {
         return sellerRepository.save(seller);
     }
 
-//    @Override
-//    public Seller updateSellerAccountStatus(Long sellerId, AccountStatus status) throws SellerException {
-//        Seller seller = getSellerById(sellerId);
-//        seller.setAccountStatus(status);
-//        return sellerRepository.save(seller);
-//    }
+    @Override
+    public Seller updateSellerAccountStatus(Long sellerId, AccountStatus status) throws SellerException {
+        Seller seller = getSellerById(sellerId);
+        seller.setAccountStatus(status);
+        return sellerRepository.save(seller);
+    }
 }
