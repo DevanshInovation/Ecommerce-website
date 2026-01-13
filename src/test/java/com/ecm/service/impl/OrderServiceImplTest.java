@@ -15,21 +15,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.ecm.domain.OrderStatus;
-import com.ecm.domain.PaymentStatus;
-import com.ecm.model.Address;
-import com.ecm.model.Cart;
-import com.ecm.model.CartItem;
-import com.ecm.model.Order;
-import com.ecm.model.OrderItem;
-import com.ecm.model.PaymentDetails;
-import com.ecm.model.Product;
-import com.ecm.model.Seller;
-import com.ecm.model.User;
-import com.ecm.repository.AddressRepository;
-import com.ecm.repository.OrderItemRepository;
-import com.ecm.repository.OrderRepository;
-import com.ecm.service.Impl.OrderServiceImpl;
+import com.ecm.legacy.domain.OrderStatus;
+import com.ecm.legacy.domain.PaymentStatus;
+import com.ecm.legacy.model.Address;
+import com.ecm.legacy.model.Cart;
+import com.ecm.legacy.model.CartItem;
+import com.ecm.legacy.model.Order;
+import com.ecm.legacy.model.OrderItem;
+import com.ecm.legacy.model.PaymentDetails;
+import com.ecm.legacy.model.Product;
+import com.ecm.legacy.model.Seller;
+import com.ecm.legacy.model.User;
+import com.ecm.legacy.repository.AddressRepository;
+import com.ecm.legacy.repository.OrderItemRepository;
+import com.ecm.legacy.repository.OrderRepository;
+import com.ecm.legacy.service.Impl.OrderServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceImplTest {
