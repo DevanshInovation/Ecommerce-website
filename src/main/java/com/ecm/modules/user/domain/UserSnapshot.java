@@ -3,6 +3,7 @@ package com.ecm.modules.user.domain;
 import com.ecm.modules.user.domain.USER_ROLE;
 import lombok.*;
 
+@Data
 @Getter
 @AllArgsConstructor
 public class UserSnapshot {
