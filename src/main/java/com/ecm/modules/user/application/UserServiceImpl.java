@@ -33,10 +33,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserSnapshot createUser(String email, String fullName) {
-        UserAggregate user = new UserAggregate();
-        user.setEmail(email);
-        user.setFullName(fullName);
-        user.setRole(USER_ROLE.ROLE_CUSTOMER);
+
+        UserAggregate user = new UserAggregate(
+                email,
+                fullName,
+                USER_ROLE.ROLE_CUSTOMER
+        );
 
         UserAggregate saved = userJpaRepository.save(user);
         return toSnapshot(saved);
@@ -46,6 +48,7 @@ public class UserServiceImpl implements UserService {
         return new UserSnapshot(
                 user.getId(),
                 user.getEmail(),
+                user.getFullName(),
                 user.getRole()
         );
     }

@@ -1,13 +1,14 @@
 package com.ecm.modules.user.domain;
 
-import com.ecm.modules.user.domain.USER_ROLE;
-import lombok.*;
 
-@Data
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 @Getter
 @AllArgsConstructor
 public class UserSnapshot {
     private Long id;
     private String email;
+    private String fullName;
     private USER_ROLE role;
 }
