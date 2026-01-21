@@ -1,5 +1,8 @@
 package com.ecm.modules.inventory.domain;
 
+import lombok.Getter;
+
+@Getter
 public class InventoryAggregate {
 
     private Long id;
