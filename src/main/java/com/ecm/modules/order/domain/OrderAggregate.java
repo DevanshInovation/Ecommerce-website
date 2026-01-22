@@ -1,45 +1,50 @@
 package com.ecm.modules.order.domain;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "order_orders")
 public class OrderAggregate {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long userId;
-    private List<OrderItem> items = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    private LocalDateTime createdAt;
 
-    protected OrderAggregate() {
-        // JPA / framework ke liye
+    private double totalAmount;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
+
+    protected OrderAggregate() {} // JPA
+
+    // ✅ DOMAIN FACTORY METHOD
+    public static OrderAggregate create(Long userId) {
+        OrderAggregate order = new OrderAggregate();
+        order.userId = userId;
+        order.status = OrderStatus.CREATED;
+        order.totalAmount = 0.0;
+        return order;
     }
 
-    public OrderAggregate(Long userId, List<OrderItem> items) {
-        if (items == null || items.isEmpty()) {
-            throw new IllegalArgumentException("Order must contain at least one item");
-        }
-
-        this.userId = userId;
-        this.items = items;
-        this.status = OrderStatus.CREATED;
-        this.createdAt = LocalDateTime.now();
+    // ✅ REAL BUSINESS METHOD
+    public void addItem(Long productId, int qty, double price) {
+        items.add(new OrderItem(productId, qty, price));
+        this.totalAmount += qty * price;
     }
 
-    public void markPaid() {
-        if (this.status != OrderStatus.CREATED) {
-            throw new IllegalStateException("Only created order can be paid");
-        }
-        this.status = OrderStatus.PAID;
+    public void markPlaced() {
+        this.status = OrderStatus.PLACED;
     }
 
-    public void cancel() {
-        if (this.status == OrderStatus.SHIPPED) {
-            throw new IllegalStateException("Shipped order cannot be cancelled");
-        }
-        this.status = OrderStatus.CANCELLED;
-    }
-
-    // getters only (NO setters)
+    // getters
+    public Long getId() { return id; }
+    public Long getUserId() { return userId; }
+    public double getTotalAmount() { return totalAmount; }
 }
